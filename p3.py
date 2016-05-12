@@ -1,6 +1,9 @@
 from bs4 import BeautifulSoup
 import re
 import urllib2
+from bokeh.charts import Bar, output_file, show, hplot, color, marker
+from bokeh.models import HoverTool
+from bokeh.plotting import figure, output_file, show
 
 def choose_channel():
 	channel_name = raw_input('Enter a channel name: ')
@@ -79,10 +82,53 @@ def get_data(list_of_links = []):
 
 	return data
 
+
 channel1 = retrieve_links(choose_channel())
 channel2 = retrieve_links(choose_channel())
 
 channel1_data = get_data(channel1)
 channel2_data = get_data(channel2)
+
+#*************************************************************************************************
+#Graphing functions added here:
+
+# Puts integer values into variables to be used in bokeh graphing:
+ch1TotalViews = channel1_data["total_views"]
+ch2TotalViews = channel2_data["total_views"]
+
+ch1TotalLikes = channel1_data["total_likes"]
+ch2TotalLikes = channel2_data["total_likes"]
+
+ch1TotalDislikes = channel1_data["total_dislikes"]
+ch2TotalDislikes = channel2_data["total_dislikes"]
+
+ch1TotalSubscribers = channel1_data["total_subscribers"]
+ch2TotalSubscribers = channel2_data["total_subscribers"]
+
+# Data to be used for graphone ordered into groups
+data = {
+    'Numbers': ['Dislikes', 'Likes', 'Subscribers', 'Total Views', 'Dislikes', 'Likes', 'Subscribers', 'Total Views'],
+    'Channels': [ch1, ch1, ch1, ch1, ch2, ch2, ch2, ch2],
+    'Total': [ch1TotalDislikes, ch1TotalLikes, ch1TotalSubscribers, ch1TotalViews, ch2TotalDislikes, ch2TotalLikes, ch2TotalSubscribers, ch2TotalViews]   
+}
+
+# Puts all the data into a format which may be graphed with correct parameters:
+bar = Bar(data, values='Total', label=['Channels', 'Numbers'],agg = 'sum',
+           title="Comparing two Youtube Channels", width=500, height = 1000,
+           group = 'Numbers', tools=['hover', 'resize', 'box_zoom', 'wheel_zoom', 'pan'])
+
+# Allows the hover tool to function:
+hover = bar.select(dict(type=HoverTool))
+hover.tooltips = [('Value of Channel',' $x'),('Value of Total',' @height')]
+
+# outputs a file with the data for the graph:
+output_file("stacked_bar.html")
+
+# Shows the graph:
+show(hplot(bar))
+#
+#End of graphing functions code!
+#**************************************************************************************
+
 print(channel1_data)
 print(channel2_data)
