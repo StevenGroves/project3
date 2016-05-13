@@ -1,0 +1,9 @@
+{% extends "default.html" %}
+{% block body %}
+	<h2>Enter in the channel name of two channels you want to compare</h2>
+	<form action="{{ url_for('robots') }}">
+	Channel 1: <input type="text" name='example'><br>
+	Channel 2: <input type="text" name='example2'><br>
+	<input type="submit" value="Submit">
+	</form>
+{% endblock %}
